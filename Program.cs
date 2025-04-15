@@ -1,94 +1,71 @@
 ﻿using System;
 using System.Collections.Generic;
 
-abstract class Hinh
+class PhanSo
 {
-    public abstract double TinhChuVi();
-    public abstract double TinhDienTich();
-}
+    public int Tu { get; set; }
+    public int Mau { get; set; }
 
-class HinhTron : Hinh
-{
-    public double BanKinh { get; set; }
-
-    public HinhTron(double r)
+    // Constructor
+    public PhanSo(int tu = 0, int mau = 1)
     {
-        BanKinh = r;
+        Tu = tu;
+        Mau = (mau != 0) ? mau : 1;
     }
 
-    public override double TinhChuVi()
+    // Nhập phân số từ bàn phím
+    public void Nhap()
     {
-        return 2 * Math.PI * BanKinh;
+        Console.Write("Nhập tử số: ");
+        Tu = int.Parse(Console.ReadLine());
+
+        do
+        {
+            Console.Write("Nhập mẫu số (khác 0): ");
+            Mau = int.Parse(Console.ReadLine());
+        } while (Mau == 0);
     }
 
-    public override double TinhDienTich()
+    // Rút gọn phân số
+    public void RutGon()
     {
-        return Math.PI * BanKinh * BanKinh;
-    }
-}
+        int ucln = UCLN(Math.Abs(Tu), Math.Abs(Mau));
+        Tu /= ucln;
+        Mau /= ucln;
 
-class HinhVuong : Hinh
-{
-    public double Canh { get; set; }
-
-    public HinhVuong(double c)
-    {
-        Canh = c;
-    }
-
-    public override double TinhChuVi()
-    {
-        return 4 * Canh;
+        // Đưa dấu trừ lên tử số nếu cần
+        if (Mau < 0)
+        {
+            Tu = -Tu;
+            Mau = -Mau;
+        }
     }
 
-    public override double TinhDienTich()
+    // Cộng 2 phân số
+    public static PhanSo Cong(PhanSo a, PhanSo b)
     {
-        return Canh * Canh;
-    }
-}
-
-class HinhChuNhat : Hinh
-{
-    public double Dai { get; set; }
-    public double Rong { get; set; }
-
-    public HinhChuNhat(double dai, double rong)
-    {
-        Dai = dai;
-        Rong = rong;
+        int tuMoi = a.Tu * b.Mau + b.Tu * a.Mau;
+        int mauMoi = a.Mau * b.Mau;
+        PhanSo kq = new PhanSo(tuMoi, mauMoi);
+        kq.RutGon();
+        return kq;
     }
 
-    public override double TinhChuVi()
+    // Tìm UCLN
+    private int UCLN(int a, int b)
     {
-        return 2 * (Dai + Rong);
+        while (b != 0)
+        {
+            int r = a % b;
+            a = b;
+            b = r;
+        }
+        return a;
     }
 
-    public override double TinhDienTich()
+    public override string ToString()
     {
-        return Dai * Rong;
-    }
-}
-
-class HinhTamGiac : Hinh
-{
-    public double a, b, c;
-
-    public HinhTamGiac(double a, double b, double c)
-    {
-        this.a = a;
-        this.b = b;
-        this.c = c;
-    }
-
-    public override double TinhChuVi()
-    {
-        return a + b + c;
-    }
-
-    public override double TinhDienTich()
-    {
-        double p = (a + b + c) / 2;
-        return Math.Sqrt(p * (p - a) * (p - b) * (p - c)); // Công thức Heron
+        return $"{Tu}/{Mau}";
     }
 }
 
@@ -96,151 +73,25 @@ class Program
 {
     static void Main(string[] args)
     {
-        List<Hinh> danhSachHinh = new List<Hinh>();
+        List<PhanSo> danhSach = new List<PhanSo>();
+        Console.Write("Nhập số lượng phân số: ");
+        int n = int.Parse(Console.ReadLine());
 
-        // Thêm các hình mẫu
-        danhSachHinh.Add(new HinhTron(5));
-        danhSachHinh.Add(new HinhVuong(4));
-        danhSachHinh.Add(new HinhChuNhat(3, 6));
-        danhSachHinh.Add(new HinhTamGiac(3, 4, 5));
-
-        double tongChuVi = 0, tongDienTich = 0;
-
-        foreach (var hinh in danhSachHinh)
+        for (int i = 0; i < n; i++)
         {
-            double cv = hinh.TinhChuVi();
-            double dt = hinh.TinhDienTich();
-
-            tongChuVi += cv;
-            tongDienTich += dt;
-
-            Console.WriteLine($"Chu vi: {cv:F2}, Diện tích: {dt:F2}");
+            Console.WriteLine($"Phân số thứ {i + 1}:");
+            PhanSo ps = new PhanSo();
+            ps.Nhap();
+            danhSach.Add(ps);
         }
 
-        Console.WriteLine($"\nTổng chu vi các hình: {tongChuVi:F2}");
-        Console.WriteLine($"Tổng diện tích các hình: {tongDienTich:F2}");
-    }
-}
-using System;
-using System.Collections.Generic;
-
-abstract class Hinh
-{
-    public abstract double TinhChuVi();
-    public abstract double TinhDienTich();
-}
-
-class HinhTron : Hinh
-{
-    public double BanKinh { get; set; }
-
-    public HinhTron(double r)
-    {
-        BanKinh = r;
-    }
-
-    public override double TinhChuVi()
-    {
-        return 2 * Math.PI * BanKinh;
-    }
-
-    public override double TinhDienTich()
-    {
-        return Math.PI * BanKinh * BanKinh;
-    }
-}
-
-class HinhVuong : Hinh
-{
-    public double Canh { get; set; }
-
-    public HinhVuong(double c)
-    {
-        Canh = c;
-    }
-
-    public override double TinhChuVi()
-    {
-        return 4 * Canh;
-    }
-
-    public override double TinhDienTich()
-    {
-        return Canh * Canh;
-    }
-}
-
-class HinhChuNhat : Hinh
-{
-    public double Dai { get; set; }
-    public double Rong { get; set; }
-
-    public HinhChuNhat(double dai, double rong)
-    {
-        Dai = dai;
-        Rong = rong;
-    }
-
-    public override double TinhChuVi()
-    {
-        return 2 * (Dai + Rong);
-    }
-
-    public override double TinhDienTich()
-    {
-        return Dai * Rong;
-    }
-}
-
-class HinhTamGiac : Hinh
-{
-    public double a, b, c;
-
-    public HinhTamGiac(double a, double b, double c)
-    {
-        this.a = a;
-        this.b = b;
-        this.c = c;
-    }
-
-    public override double TinhChuVi()
-    {
-        return a + b + c;
-    }
-
-    public override double TinhDienTich()
-    {
-        double p = (a + b + c) / 2;
-        return Math.Sqrt(p * (p - a) * (p - b) * (p - c)); // Công thức Heron
-    }
-}
-
-class Program
-{
-    static void Main(string[] args)
-    {
-        List<Hinh> danhSachHinh = new List<Hinh>();
-
-        // Thêm các hình mẫu
-        danhSachHinh.Add(new HinhTron(5));
-        danhSachHinh.Add(new HinhVuong(4));
-        danhSachHinh.Add(new HinhChuNhat(3, 6));
-        danhSachHinh.Add(new HinhTamGiac(3, 4, 5));
-
-        double tongChuVi = 0, tongDienTich = 0;
-
-        foreach (var hinh in danhSachHinh)
+        PhanSo tong = new PhanSo(0, 1);
+        foreach (var ps in danhSach)
         {
-            double cv = hinh.TinhChuVi();
-            double dt = hinh.TinhDienTich();
-
-            tongChuVi += cv;
-            tongDienTich += dt;
-
-            Console.WriteLine($"Chu vi: {cv:F2}, Diện tích: {dt:F2}");
+            tong = PhanSo.Cong(tong, ps);
         }
 
-        Console.WriteLine($"\nTổng chu vi các hình: {tongChuVi:F2}");
-        Console.WriteLine($"Tổng diện tích các hình: {tongDienTich:F2}");
+        Console.WriteLine("Tổng các phân số là: " + tong);
     }
 }
+
